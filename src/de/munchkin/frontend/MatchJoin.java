@@ -1,5 +1,13 @@
 package de.munchkin.frontend;
 
-public class MatchJoin {
+import javax.swing.JFrame;
 
+public class MatchJoin extends JFrame{
+
+	public MatchJoin() {
+		
+		
+		
+	}
+	
 }

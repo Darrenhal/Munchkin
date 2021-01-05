@@ -2,9 +2,9 @@ package de.munchkin.frontend;
 
 import javax.swing.JFrame;
 
-public class MatchCreation extends JFrame{
-	
-	public MatchCreation() {
+public class GameScreen extends JFrame{
+
+	public GameScreen() {
 		
 		
 		
