@@ -1,19 +1,14 @@
 package de.munchkin.frontend;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import de.munchkin.utilities.JPictureBox;
 
 public class MunchkinLauncher extends JFrame{
 
@@ -26,7 +21,7 @@ public class MunchkinLauncher extends JFrame{
 	
 	
 	public static void main(String[] args) {
-		MunchkinLauncher launcher = new MunchkinLauncher();
+		new MunchkinLauncher();
 	}
 	
 	public MunchkinLauncher() {
@@ -45,14 +40,23 @@ public class MunchkinLauncher extends JFrame{
 		setVisible(true);
 		
 		loadComponents();
+		loadBounds();
 		addActionListeners();
-
+		
+		addComponentListener(new ComponentAdapter() {
+			
+			@Override
+			public void componentResized(ComponentEvent e) {
+				super.componentResized(e);
+				loadBounds();
+				repaint();
+			}
+			
+		});
+		
 	}
 	
 	private void loadComponents() {
-		
-		int width = contentPane.getSize().width;
-		int height = contentPane.getSize().height;
 		
 		// Load header image
 //		ImageIcon image = new ImageIcon(ClassLoader.getSystemResource("resources/Munchkin_logo.jpg"));
@@ -64,11 +68,20 @@ public class MunchkinLauncher extends JFrame{
 		
 		
 		btnHostGame = new JButton("Host Game");
-		btnHostGame.setBounds(50, 210, 250, 100);
-		contentPane.add(btnHostGame);
 		
 		btnJoinGame = new JButton("Join Game");
-		btnJoinGame.setBounds(400, 210, 250, 100);
+		
+	}
+	
+	private void loadBounds() {
+		
+		int width = contentPane.getSize().width;
+		int height = contentPane.getSize().height;
+		
+		btnHostGame.setBounds(width/2 - 300, height * 2 / 3, 250, 100);
+		contentPane.add(btnHostGame);
+		
+		btnJoinGame.setBounds(width/2 + 50, height * 2 / 3, 250, 100);
 		contentPane.add(btnJoinGame);
 		
 	}
@@ -76,11 +89,13 @@ public class MunchkinLauncher extends JFrame{
 	private void addActionListeners() {
 		
 		btnHostGame.addActionListener(e -> {
-			
+			new MatchCreation();
+			dispose();
 		});
 		
 		btnJoinGame.addActionListener(e -> {
-			
+			new MatchJoin();
+			dispose();
 		});
 		
 	}
