@@ -2,12 +2,15 @@ package de.munchkin.frontend;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class MunchkinLauncher extends JFrame{
@@ -18,6 +21,7 @@ public class MunchkinLauncher extends JFrame{
 	private Dimension screenDim = toolkit.getScreenSize();
 	private JPanel contentPane;
 	private JButton btnHostGame, btnJoinGame;
+	private JLabel imageLabel;
 	
 	
 	public static void main(String[] args) {
@@ -59,13 +63,12 @@ public class MunchkinLauncher extends JFrame{
 	private void loadComponents() {
 		
 		// Load header image
-//		ImageIcon image = new ImageIcon(ClassLoader.getSystemResource("resources/Munchkin_logo.jpg"));
+//		ImageIcon image = new ImageIcon(toolkit.getImage(MunchkinLauncher.class.getResource("Munchkin_logo.jpg")));
 //		
-//		JLabel imageLabel = new JLabel(image);
-//		imageLabel.setVisible(true);
-//		imageLabel.setBounds(200, 50, 620, 210);
-//		contentPane.add(imageLabel);
-		
+//		
+//		
+//		imageLabel = new JLabel();
+//		imageLabel.setIcon(image);
 		
 		btnHostGame = new JButton("Host Game");
 		
@@ -77,6 +80,9 @@ public class MunchkinLauncher extends JFrame{
 		
 		int width = contentPane.getSize().width;
 		int height = contentPane.getSize().height;
+		
+//		imageLabel.setBounds(20, 20, 700, 210);
+//		contentPane.add(imageLabel);
 		
 		btnHostGame.setBounds(width/2 - 300, height * 2 / 3, 250, 100);
 		contentPane.add(btnHostGame);

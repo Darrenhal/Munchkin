@@ -13,6 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import de.munchkin.backend.IPValidator;
+
 public class MatchCreation extends JFrame{
 	
 	private static final long serialVersionUID = 7024906921919000602L;
@@ -81,6 +83,18 @@ public class MatchCreation extends JFrame{
 		comboBoxGender = new JComboBox<String>(genders);
 		comboBoxGender.setSelectedIndex(0);
 		
+		JLabel lblIPAddress = new JLabel("IP Address: ");
+		lblIPAddress.setBounds(20, 200, 100, 20);
+		contentPane.add(lblIPAddress);
+		
+		txtIPAddress = new JTextField();
+		
+		JLabel lblPort = new JLabel("Port: ");
+		lblPort.setBounds(20, 240, 100, 20);
+		contentPane.add(lblPort);
+		
+		txtPort = new JTextField();
+		
 	}
 	
 	private void loadBounds() {
@@ -118,15 +132,38 @@ public class MatchCreation extends JFrame{
 		comboBoxGender.setBounds(20, 60, 180, 20);
 		contentPane.add(comboBoxGender);
 		
+		txtIPAddress.setBounds(100, 200, 100, 20);
+		contentPane.add(txtIPAddress);
+		
+		txtPort.setBounds(100, 240, 100, 20);
+		contentPane.add(txtPort);
+		
 	}
 	
 	private void addActionListeners() {
 		
 		btnCreateGame.addActionListener(e -> {
+			
 			String playerName = txtPlayerName.getText();
+			
+			int minPlayers = (int) comboBoxMinPlayers.getSelectedItem();
+			int maxPlayers = (int) comboBoxMaxPlayers.getSelectedItem();
+			
+			String ipAddress = txtIPAddress.getText();
+			String port = txtPort.getText();
+			
+			IPValidator validator = new IPValidator();
 			
 			if (playerName.equals("") || playerName == null) {
 				JOptionPane.showMessageDialog(null, "No Player Name set!", "Player Name Error", JOptionPane.ERROR_MESSAGE);
+			} else if(minPlayers > maxPlayers) {
+				JOptionPane.showMessageDialog(null, "Player Count not set correctly!", "Player Count Error", JOptionPane.ERROR_MESSAGE);
+			} else if(minPlayers > maxPlayers) {
+				JOptionPane.showMessageDialog(null, "Player Count not set correctly!", "Player Count Error", JOptionPane.ERROR_MESSAGE);
+			} else if (!port.matches("(0-9)*")) {
+				JOptionPane.showMessageDialog(null, "Wrong Port Format", "Port Error", JOptionPane.ERROR_MESSAGE);
+			} else if (!validator.validateIP(ipAddress)) {
+				JOptionPane.showMessageDialog(null, "Wrong IP Format", "IP Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				new Lobby(0);
 				dispose();
