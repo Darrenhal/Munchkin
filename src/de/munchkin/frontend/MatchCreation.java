@@ -3,6 +3,7 @@ package de.munchkin.frontend;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -25,7 +26,7 @@ public class MatchCreation extends JFrame{
 	
 	private JComboBox<Integer> comboBoxMinPlayers, comboBoxMaxPlayers;
 	private JComboBox<String> comboBoxGender;
-	private JButton btnCreateGame;
+	private JButton btnCreateGame, btnGenerateNewPortNumber;
 	private JTextField txtPlayerName, txtIPAddress, txtPort;
 	private JCheckBox cbBaseGame, cbExpansion1; //add more expansion checkboxes in the future
 	private Integer[] playerCount = {1, 2, 3, 4, 5, 6};
@@ -93,7 +94,9 @@ public class MatchCreation extends JFrame{
 		lblPort.setBounds(20, 240, 100, 20);
 		contentPane.add(lblPort);
 		
-		txtPort = new JTextField();
+		txtPort = new JTextField("" + generatePortNumber());
+		
+		btnGenerateNewPortNumber = new JButton();
 		
 	}
 	
@@ -138,9 +141,18 @@ public class MatchCreation extends JFrame{
 		txtPort.setBounds(100, 240, 100, 20);
 		contentPane.add(txtPort);
 		
+		btnGenerateNewPortNumber.setBounds(200, 240, 20, 20);
+		contentPane.add(btnGenerateNewPortNumber);
+		
 	}
 	
 	private void addActionListeners() {
+		
+		btnGenerateNewPortNumber.addActionListener(e -> {
+			
+			txtPort.setText("" + generatePortNumber());
+			
+		});
 		
 		btnCreateGame.addActionListener(e -> {
 			
@@ -152,16 +164,22 @@ public class MatchCreation extends JFrame{
 			String ipAddress = txtIPAddress.getText();
 			String port = txtPort.getText();
 			
+			int socketPort;
+			
+			if (port == null) {
+				socketPort = 25000;
+			}
+			
 			IPValidator validator = new IPValidator();
 			
 			if (playerName.equals("") || playerName == null) {
 				JOptionPane.showMessageDialog(null, "No Player Name set!", "Player Name Error", JOptionPane.ERROR_MESSAGE);
 			} else if(minPlayers > maxPlayers) {
 				JOptionPane.showMessageDialog(null, "Player Count not set correctly!", "Player Count Error", JOptionPane.ERROR_MESSAGE);
-			} else if(minPlayers > maxPlayers) {
-				JOptionPane.showMessageDialog(null, "Player Count not set correctly!", "Player Count Error", JOptionPane.ERROR_MESSAGE);
-			} else if (!port.matches("(0-9)*")) {
+			} else if (!port.matches("[1-9]{1}[0-9]{3,4}")) {
 				JOptionPane.showMessageDialog(null, "Wrong Port Format", "Port Error", JOptionPane.ERROR_MESSAGE);
+			} else if ((socketPort = new Integer(port)) > 65535 || socketPort < 1024) {
+				JOptionPane.showMessageDialog(null, "Port out of bounds. Port must be a number between 1024 and 65535", "Port Error", JOptionPane.ERROR_MESSAGE);
 			} else if (!validator.validateIP(ipAddress)) {
 				JOptionPane.showMessageDialog(null, "Wrong IP Format", "IP Error", JOptionPane.ERROR_MESSAGE);
 			} else {
@@ -171,6 +189,12 @@ public class MatchCreation extends JFrame{
 			
 		});
 		
+	}
+	
+	private int generatePortNumber() {
+		Random random = new Random();
+		int randomPort = random.nextInt(65536 - 1024) + 1024;
+		return randomPort;
 	}
 	
 }

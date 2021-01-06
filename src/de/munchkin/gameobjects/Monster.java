@@ -1,5 +1,5 @@
 package de.munchkin.gameobjects;
 
-public class Monster {
+public class Monster implements IGameCard {
 
 }

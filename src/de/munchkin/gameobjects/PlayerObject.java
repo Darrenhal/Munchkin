@@ -6,6 +6,11 @@ public class PlayerObject {
 	
 	private String gender;
 	private int level;
+	private Class playerClass;
+	private Race race;
+	private int escapeValue;
+	private int[] slotCounts = {2,1,1,1};
+	
 	private ArrayList<IGameCard> equipped;
 	private ArrayList<IGameCard> hand;
 	private ArrayList<IGameCard> backpack;
@@ -14,6 +19,9 @@ public class PlayerObject {
 	
 	public PlayerObject(String gender, int playerIdentifier) {
 		
+		this.escapeValue = 5;
+		this.race = new Race("Human");
+		this.playerClass = new Class(null);
 		this.PLAYER_IDENTIFIER = playerIdentifier;
 		this.level = 1;
 		this.gender = gender;
@@ -70,6 +78,30 @@ public class PlayerObject {
 	
 	public String getGender() {
 		return gender;
+	}
+	
+	public void updateEscapeValue(int escapeValue) {
+		this.escapeValue = escapeValue;
+	}
+	
+	public int getEscapeValue() {
+		return escapeValue;
+	}
+	
+	public void setRace(Race race) {
+		this.race = race;
+	}
+	
+	public Race getRace() {
+		return race;
+	}
+	
+	public void setClass(Class playerClass) {
+		this.playerClass = playerClass;
+	}
+	
+	public Class getPlayerClass() {
+		return playerClass;
 	}
 	
 }
