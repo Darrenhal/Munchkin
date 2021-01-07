@@ -1,0 +1,12 @@
+StackType{Treasure,Door,(Dungeon)};
+CardType{Monster,Race,Class,Item,Curse,Intervention,Amplifier,(Horse)};
+Level;
+Name;
+Description;
+Bonus;
+Slot;
+Buffs;
+Debuffs;
+Restrictions;
+BadThings;
+Treasures
