@@ -2,17 +2,15 @@ package de.munchkin.frontend;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.net.URL;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import de.munchkin.utilities.JPictureBox;
 
@@ -25,10 +23,10 @@ public class MunchkinLauncher extends JFrame{
 	private final JPanel contentPane = new JPanel(null);
 	private final JButton btnHostGame = new JButton("Host Game");
 	private final JButton btnJoinGame = new JButton("Join Game");
-	private final JPictureBox imageLabel = new JPictureBox();
-	private final Image backgroundImage;
+	private final JPictureBox imageLabel = new JPictureBox("/Munchkin_logo.jpg");
 	
 	public static void main(String[] args) {
+		loadLookAndFeel();
 		new MunchkinLauncher();
 	}
 	
@@ -40,33 +38,20 @@ public class MunchkinLauncher extends JFrame{
 		setMinimumSize(new Dimension(700, 387));
 		setLayout(null);
 		
+		setIconImage(imageLabel.getImage());
+		
 		contentPane.setLayout(null);
 		contentPane.setBackground(new Color(253, 205, 136));
+		contentPane.add(btnHostGame);
+		contentPane.add(btnJoinGame);
+		contentPane.add(imageLabel);
 		setContentPane(contentPane);
 		
 		setVisible(true);
 		
-		backgroundImage = loadBackgroundImage();
-		imageLabel.setImage(backgroundImage);
-		
 		loadBounds();
 		addActionListeners();
 		
-	}
-	
-	private Image loadBackgroundImage() {
-        final long nowMs = System.currentTimeMillis();
-        final URL res = this.getClass().getResource("/Munchkin_logo.jpg");
-
-        // load Image
-        //      final ImageIcon ret1 = new ImageIcon(res); // is not as good, we eventually only need an Image, we do not need the wrapper that ImageIcon provides
-        //      final BufferedImage ret2 = ImageIO.read(res); // is better, but gives us BufferedImage, which is also more than we need. plus throws IOException
-        final Image ret3 = Toolkit.getDefaultToolkit().getImage(res); // best way. If behaviour plays a role: Loads the image the same way that ImageIcon CTOR would.
-
-        final long durMs = System.currentTimeMillis() - nowMs;
-        System.out.println("Loading BG Image took " + durMs + "ms.");
-
-        return ret3;
 	}
 	
 	void loadBounds() {
@@ -75,17 +60,10 @@ public class MunchkinLauncher extends JFrame{
 		int height = contentPane.getSize().height;
 		
 		btnHostGame.setBounds(width/2 - 300, height * 2 / 3, 250, 100);
-		contentPane.add(btnHostGame);
 		
 		btnJoinGame.setBounds(width/2 + 50, height * 2 / 3, 250, 100);
-		contentPane.add(btnJoinGame);
-		
 		
 		imageLabel.setBounds(20, 0, width - 40, height * 2 / 3);
-		contentPane.add(imageLabel);
-		
-		revalidate();
-		repaint();
 		
 	}
 	
@@ -102,7 +80,7 @@ public class MunchkinLauncher extends JFrame{
 		});
 		
 		btnHostGame.addActionListener(e -> {
-			new MatchCreation();
+			new MatchCreation(getIconImage());
 			dispose();
 		});
 		
@@ -113,5 +91,18 @@ public class MunchkinLauncher extends JFrame{
 		
 	}
 	
+	public static void loadLookAndFeel() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

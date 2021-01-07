@@ -2,30 +2,45 @@ package de.munchkin.frontend;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 
-public class Lobby extends JFrame{
+import de.munchkin.keybindings.EnterFullscreen;
+import de.munchkin.keybindings.KeyBindings;
+
+public class Lobby extends JFrame {
 
 	private static final long serialVersionUID = 4590660629277661996L;
+
+	private final Toolkit toolkit = Toolkit.getDefaultToolkit();
+	private final Dimension screenDim = toolkit.getScreenSize();
 	
-	private Toolkit toolkit = Toolkit.getDefaultToolkit();
-	private Dimension screenDim = toolkit.getScreenSize();
-	private JPanel contentPane;
+	private int playerCount = 1;
 	
-	private JTextArea txtLobbyHistory;
-	
-	public Lobby(int windowState) {
-		
-		setTitle("Lobby");
+	private final JPanel contentPane = new JPanel(null);
+	private final JButton btnStartMatch = new JButton("Start Match");
+	private final JTextArea txtLobbyHistory = new JTextArea();
+	private final JLabel lblPlayerCount = new JLabel("" + playerCount);
+	private final JLabel lblPlayers = new JLabel("Players:");
+
+	public Lobby(Integer windowState, Image image) {
+
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setTitle("Lobby");
 		setExtendedState(MAXIMIZED_BOTH);
-		setMinimumSize(screenDim);
+		setSize(screenDim);
+		setMinimumSize(new Dimension(800, 400));
+
+		setIconImage(image);
 		
 		if (windowState == 1) {
 			setUndecorated(true);
@@ -33,64 +48,81 @@ public class Lobby extends JFrame{
 			setUndecorated(false);
 		}
 		setResizable(true);
-		
-		contentPane = new JPanel(null);
+
 		contentPane.setLayout(null);
 		setLayout(null);
-		setContentPane(contentPane);
+		contentPane.getInputMap(KeyBindings.AFC).put(KeyStroke.getKeyStroke("F11"), "lobby_fullscreen");
+		contentPane.getActionMap().put("lobby_fullscreen", new EnterFullscreen(this));
 		contentPane.setBackground(new Color(253, 205, 136));
-		
-		setVisible(true);
-		
+		setContentPane(contentPane);
+
 		loadComponents();
 		loadBounds();
 		addActionListeners();
-		
-		addKeyListener(new KeyAdapter() {
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				super.keyTyped(e);
-				if (e.getKeyCode() == KeyEvent.VK_F11) {
-					setVisible(false);
-					if (isUndecorated()) {
-						new Lobby(0);
-					} else {
-						new Lobby(1);
-					}
 
-					dispose();
-				}
-			}
-			
-		});
-		
+		setVisible(true);
+
 	}
-	
+
 	private void loadComponents() {
 		
-		txtLobbyHistory = new JTextArea();
-		txtLobbyHistory.setEnabled(false);
+		contentPane.add(txtLobbyHistory);
+		contentPane.add(btnStartMatch);
+		contentPane.add(lblPlayerCount);
+		contentPane.add(lblPlayers);
 		
 	}
 	
 	private void loadBounds() {
 		
-		txtLobbyHistory.setBounds(getWidth() - (getWidth() / 4 + 40), 20, getWidth() / 4, contentPane.getHeight() - 60);
-		contentPane.add(txtLobbyHistory);
-		
-	}
-	
-	private void addActionListeners() {
-		
+		contentPane.setSize(getSize());
 
+		txtLobbyHistory.setBounds(getWidth() - (getWidth() / 4 + 40), 20, getWidth() / 4,
+				contentPane.getHeight() - 120);
+		txtLobbyHistory.setEditable(false);
+
+		btnStartMatch.setBounds(20, getHeight() - 120, 150, 50);
 		
+		lblPlayerCount.setBounds(100, 20, 50, 20);
+		
+		lblPlayers.setBounds(20, 20, 80, 20);
+	}
+
+	private void addActionListeners() {
+
+		addComponentListener(new ComponentAdapter() {
+			
+			@Override
+			public void componentResized(ComponentEvent e) {
+				super.componentResized(e);
+				loadBounds();
+			}
+			
+		});
+		
+		btnStartMatch.addActionListener(e -> {
+
+			new GameScreen(0, getIconImage());
+			dispose();
+
+		});
+
+	}
+
+	public void addLobbyUpdate(String update) {
+
+		txtLobbyHistory.append(update + "\n");
+
+	}
+
+	public void playerJoined() {
+		playerCount++;
+		lblPlayerCount.setText("" + playerCount);
 	}
 	
-	public void addLobbyUpdate(String update) {
-		
-		txtLobbyHistory.append(update + "\n");
-		
+	public void playerLeft() {
+		playerCount--;
+		lblPlayerCount.setText("" + playerCount);
 	}
 	
 }

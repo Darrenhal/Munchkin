@@ -2,6 +2,7 @@ package de.munchkin.frontend;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Random;
 
@@ -14,8 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import de.munchkin.backend.IPValidator;
-
 public class MatchCreation extends JFrame{
 	
 	private static final long serialVersionUID = 7024906921919000602L;
@@ -27,12 +26,12 @@ public class MatchCreation extends JFrame{
 	private JComboBox<Integer> comboBoxMinPlayers, comboBoxMaxPlayers;
 	private JComboBox<String> comboBoxGender;
 	private JButton btnCreateGame, btnGenerateNewPortNumber;
-	private JTextField txtPlayerName, txtIPAddress, txtPort;
+	private JTextField txtPlayerName, txtPort;
 	private JCheckBox cbBaseGame, cbExpansion1; //add more expansion checkboxes in the future
 	private Integer[] playerCount = {1, 2, 3, 4, 5, 6};
 	private String[] genders = {"male", "female"};
 	
-	public MatchCreation() {
+	public MatchCreation(Image image) {
 		
 		int width = 600;
 		int height = 400;
@@ -43,6 +42,8 @@ public class MatchCreation extends JFrame{
 		setSize(width, height);
 		setMinimumSize(new Dimension(700, 387));
 		setResizable(false);
+		
+		setIconImage(image);
 		
 		contentPane = new JPanel(null);
 		contentPane.setLayout(null);
@@ -78,17 +79,10 @@ public class MatchCreation extends JFrame{
 		
 		txtPlayerName = new JTextField();
 		
-		txtIPAddress = new JTextField();
 		txtPort = new JTextField();
 		
 		comboBoxGender = new JComboBox<String>(genders);
 		comboBoxGender.setSelectedIndex(0);
-		
-		JLabel lblIPAddress = new JLabel("IP Address: ");
-		lblIPAddress.setBounds(20, 200, 100, 20);
-		contentPane.add(lblIPAddress);
-		
-		txtIPAddress = new JTextField();
 		
 		JLabel lblPort = new JLabel("Port: ");
 		lblPort.setBounds(20, 240, 100, 20);
@@ -135,9 +129,6 @@ public class MatchCreation extends JFrame{
 		comboBoxGender.setBounds(20, 60, 180, 20);
 		contentPane.add(comboBoxGender);
 		
-		txtIPAddress.setBounds(100, 200, 100, 20);
-		contentPane.add(txtIPAddress);
-		
 		txtPort.setBounds(100, 240, 100, 20);
 		contentPane.add(txtPort);
 		
@@ -161,7 +152,6 @@ public class MatchCreation extends JFrame{
 			int minPlayers = (int) comboBoxMinPlayers.getSelectedItem();
 			int maxPlayers = (int) comboBoxMaxPlayers.getSelectedItem();
 			
-			String ipAddress = txtIPAddress.getText();
 			String port = txtPort.getText();
 			
 			int socketPort;
@@ -169,8 +159,6 @@ public class MatchCreation extends JFrame{
 			if (port == null) {
 				socketPort = 25000;
 			}
-			
-			IPValidator validator = new IPValidator();
 			
 			if (playerName.equals("") || playerName == null) {
 				JOptionPane.showMessageDialog(null, "No Player Name set!", "Player Name Error", JOptionPane.ERROR_MESSAGE);
@@ -180,10 +168,8 @@ public class MatchCreation extends JFrame{
 				JOptionPane.showMessageDialog(null, "Wrong Port Format", "Port Error", JOptionPane.ERROR_MESSAGE);
 			} else if ((socketPort = new Integer(port)) > 65535 || socketPort < 1024) {
 				JOptionPane.showMessageDialog(null, "Port out of bounds. Port must be a number between 1024 and 65535", "Port Error", JOptionPane.ERROR_MESSAGE);
-			} else if (!validator.validateIP(ipAddress)) {
-				JOptionPane.showMessageDialog(null, "Wrong IP Format", "IP Error", JOptionPane.ERROR_MESSAGE);
 			} else {
-				new Lobby(0);
+				new Lobby(0, getIconImage());
 				dispose();
 			}
 			

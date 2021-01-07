@@ -20,7 +20,7 @@ public class PlayerObject {
 	public PlayerObject(String gender, int playerIdentifier) {
 		
 		this.escapeValue = 5;
-		this.race = new Race("Human");
+		this.race = new Race("Human", new int[] {0,0,0,0});
 		this.playerClass = new Class(null);
 		this.PLAYER_IDENTIFIER = playerIdentifier;
 		this.level = 1;
