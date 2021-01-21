@@ -10,6 +10,7 @@ public class PlayerObject {
 	private Race race;
 	private int escapeValue;
 	private int[] slotCounts = {2,1,1,1};
+	private int strength;
 	
 	private ArrayList<IGameCard> equipped;
 	private ArrayList<IGameCard> hand;
@@ -24,6 +25,7 @@ public class PlayerObject {
 		this.playerClass = new Class(null);
 		this.PLAYER_IDENTIFIER = playerIdentifier;
 		this.level = 1;
+		this.strength = level;
 		this.gender = gender;
 		equipped = new ArrayList<IGameCard>();
 		hand = new ArrayList<IGameCard>();
@@ -55,6 +57,7 @@ public class PlayerObject {
 			hand.remove(item);
 		} else if(equipped.contains(item)){
 			equipped.remove(item);
+			updateStrength(item.getBonus() * -1);
 		}
 
 		backpack.add(item);
@@ -70,6 +73,7 @@ public class PlayerObject {
 		}
 
 		equipped.add(item);
+		updateStrength(item.getBonus());
 	}
 	
 	public int getLevel() {
@@ -102,6 +106,10 @@ public class PlayerObject {
 	
 	public Class getPlayerClass() {
 		return playerClass;
+	}
+	
+	private void updateStrength(int itemStrength) {
+		this.strength += itemStrength;
 	}
 	
 }

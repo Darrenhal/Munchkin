@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -14,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import de.munchkin.backend.NetworkController;
 
 public class MatchCreation extends JFrame{
 	
@@ -26,6 +30,7 @@ public class MatchCreation extends JFrame{
 	private JComboBox<Integer> comboBoxMinPlayers, comboBoxMaxPlayers;
 	private JComboBox<String> comboBoxGender;
 	private JButton btnCreateGame, btnGenerateNewPortNumber;
+	private final JButton btnBack = new JButton("Back");
 	private JTextField txtPlayerName, txtPort;
 	private JCheckBox cbBaseGame, cbExpansion1; //add more expansion checkboxes in the future
 	private Integer[] playerCount = {1, 2, 3, 4, 5, 6};
@@ -48,6 +53,9 @@ public class MatchCreation extends JFrame{
 		contentPane = new JPanel(null);
 		contentPane.setLayout(null);
 		setLayout(null);
+		
+		contentPane.add(btnBack);
+		
 		setContentPane(contentPane);
 		contentPane.setBackground(new Color(253, 205, 136));
 		
@@ -94,7 +102,7 @@ public class MatchCreation extends JFrame{
 		
 	}
 	
-	private void loadBounds() {
+	void loadBounds() {
 		
 		JLabel lblMinPlayers = new JLabel("Min. Players:");
 		lblMinPlayers.setBounds(getWidth() - 300, 20, 100, 20);
@@ -135,9 +143,21 @@ public class MatchCreation extends JFrame{
 		btnGenerateNewPortNumber.setBounds(200, 240, 20, 20);
 		contentPane.add(btnGenerateNewPortNumber);
 		
+		btnBack.setBounds(contentPane.getWidth() - 60, contentPane.getHeight() - 60, 40, 40);
+		
 	}
 	
 	private void addActionListeners() {
+		
+		addComponentListener(new ComponentAdapter() {
+			
+			@Override
+			public void componentResized(ComponentEvent e) {
+				super.componentResized(e);
+				loadBounds();
+			}
+			
+		});
 		
 		btnGenerateNewPortNumber.addActionListener(e -> {
 			
@@ -169,9 +189,18 @@ public class MatchCreation extends JFrame{
 			} else if ((socketPort = new Integer(port)) > 65535 || socketPort < 1024) {
 				JOptionPane.showMessageDialog(null, "Port out of bounds. Port must be a number between 1024 and 65535", "Port Error", JOptionPane.ERROR_MESSAGE);
 			} else {
-				new Lobby(0, getIconImage());
+				
+				Lobby lobby = new Lobby(0, getIconImage());
+				new Thread(new NetworkController("", new Integer(port), true, lobby)).start();
 				dispose();
 			}
+			
+		});
+		
+		btnBack.addActionListener(e -> {
+			
+			new MunchkinLauncher();
+			dispose();
 			
 		});
 		

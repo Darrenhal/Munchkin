@@ -6,6 +6,7 @@ import java.util.Collections;
 public class SessionManager implements Runnable{
 	
 	private ArrayList<Client> clients;
+	private Client activePlayer;
 	
 	public SessionManager(ArrayList<Client> clients) {
 		
@@ -20,6 +21,13 @@ public class SessionManager implements Runnable{
 	}
 	
 	public void endTurn() {
+		int activePlayerIndex = clients.indexOf(this.activePlayer);
+		
+		if (activePlayerIndex == clients.size() - 1) {
+			activePlayer = clients.get(0);
+		} else {
+			activePlayer = clients.get(activePlayerIndex + 1);
+		}
 		
 	}
 	

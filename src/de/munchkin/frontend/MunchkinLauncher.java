@@ -85,7 +85,7 @@ public class MunchkinLauncher extends JFrame{
 		});
 		
 		btnJoinGame.addActionListener(e -> {
-			new MatchJoin();
+			new MatchJoin(getIconImage());
 			dispose();
 		});
 		

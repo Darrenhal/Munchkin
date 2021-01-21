@@ -73,7 +73,7 @@ public class Lobby extends JFrame {
 		
 	}
 	
-	private void loadBounds() {
+	void loadBounds() {
 		
 		contentPane.setSize(getSize());
 
@@ -90,6 +90,16 @@ public class Lobby extends JFrame {
 
 	private void addActionListeners() {
 
+		addComponentListener(new ComponentAdapter() {
+			
+			@Override
+			public void componentResized(ComponentEvent e) {
+				super.componentResized(e);
+				loadBounds();
+			}
+			
+		});
+		
 		addComponentListener(new ComponentAdapter() {
 			
 			@Override
