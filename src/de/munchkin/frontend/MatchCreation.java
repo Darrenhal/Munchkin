@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import de.munchkin.backend.NetworkController;
+import de.munchkin.backend.networking.ServerController;
 
 public class MatchCreation extends JFrame{
 	
@@ -191,7 +191,7 @@ public class MatchCreation extends JFrame{
 			} else {
 				
 				Lobby lobby = new Lobby(0, getIconImage());
-				new Thread(new NetworkController("", new Integer(port), true, lobby)).start();
+				new Thread(new ServerController("", new Integer(port), lobby)).start();
 				dispose();
 			}
 			

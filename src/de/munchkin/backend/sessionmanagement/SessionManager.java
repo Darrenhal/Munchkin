@@ -1,14 +1,14 @@
-package de.munchkin.backend;
+package de.munchkin.backend.sessionmanagement;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class SessionManager implements Runnable{
 	
-	private ArrayList<Client> clients;
-	private Client activePlayer;
+	private ArrayList<ClientThread> clients;
+	private ClientThread activePlayer;
 	
-	public SessionManager(ArrayList<Client> clients) {
+	public SessionManager(ArrayList<ClientThread> clients) {
 		
 		this.clients = clients;
 		Collections.shuffle(this.clients);

@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import de.munchkin.backend.NetworkController;
+import de.munchkin.backend.networking.ClientController;
 
 public class MatchJoin extends JFrame{
 
@@ -114,9 +114,11 @@ public class MatchJoin extends JFrame{
 			
 			int port = new Integer(txtPort.getText());
 			String ipAddress = txtIPAddress.getText();
+			String playerName = txtPlayerName.getText();
+			String gender = comboBoxGender.getSelectedItem().toString();
 			
 			Lobby lobby = new Lobby(0, getIconImage());
-			new Thread(new NetworkController(ipAddress, new Integer(port), false, lobby)).start();
+			new Thread(new ClientController(ipAddress, new Integer(port), lobby, playerName, gender)).start();
 			
 			dispose();
 			

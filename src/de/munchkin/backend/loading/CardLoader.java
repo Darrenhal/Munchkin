@@ -1,4 +1,4 @@
-package de.munchkin.backend;
+package de.munchkin.backend.loading;
 
 public class CardLoader {
 	

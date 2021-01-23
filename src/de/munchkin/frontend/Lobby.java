@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -128,11 +129,22 @@ public class Lobby extends JFrame {
 	public void playerJoined() {
 		playerCount++;
 		lblPlayerCount.setText("" + playerCount);
+		repaint();
 	}
 	
 	public void playerLeft() {
 		playerCount--;
 		lblPlayerCount.setText("" + playerCount);
+		repaint();
+	}
+	
+	public int getPlayerCount() {
+		return playerCount;
+	}
+	
+	public String getLobbyHistory() {
+		System.out.println(txtLobbyHistory.getText());
+		return txtLobbyHistory.getText();
 	}
 	
 }
