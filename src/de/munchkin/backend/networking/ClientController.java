@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import de.munchkin.frontend.Lobby;
 import de.munchkin.shared.LobbyUpdate;
+import de.munchkin.utilities.LobbyState;
 
 public class ClientController implements Runnable {
 
@@ -44,6 +45,8 @@ public class ClientController implements Runnable {
 		establishStreams();
 		
 		communicatePlayerInfo();
+		
+		receiveLobbyState();
 		
 	}
 	
@@ -85,6 +88,21 @@ public class ClientController implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+	}
+	
+	private void receiveLobbyState() {
+		
+		LobbyState state = null;
+		
+		try {
+			state = (LobbyState)in.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		lobby.addLobbyUpdate(state.getLobbyHistory());
+		lobby.setPlayerCount(state.getPlayerCount());
 		
 	}
 	

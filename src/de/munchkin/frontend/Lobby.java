@@ -147,4 +147,9 @@ public class Lobby extends JFrame {
 		return txtLobbyHistory.getText();
 	}
 	
+	public void setPlayerCount(int playerCount) {
+		this.playerCount = playerCount;
+		lblPlayerCount.setText("" + playerCount);
+	}
+	
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import de.munchkin.backend.sessionmanagement.ClientThread;
 import de.munchkin.frontend.Lobby;
 import de.munchkin.shared.LobbyUpdate;
+import de.munchkin.utilities.LobbyState;
 
 public class ServerController implements Runnable {
 
@@ -42,6 +43,10 @@ public class ServerController implements Runnable {
 				ClientThread client = new ClientThread(so.getInetAddress().getHostAddress(), so.getPort(), so, lobby);
 				clients.add(client);
 				new Thread(client).start();
+				
+				Thread.sleep(100);
+				
+				client.getOutputStream().writeObject(new LobbyState(lobby.getPlayerCount(), lobby.getLobbyHistory()));
 				
 				Thread.sleep(100);
 				
