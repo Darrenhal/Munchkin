@@ -27,6 +27,7 @@ public class ClientThread implements Runnable{
 		this.socket = socket;
 		this.lobby = lobby;
 		this.inLobby = true;
+		this.inMatch = false;
 		
 	}
 
@@ -46,6 +47,8 @@ public class ClientThread implements Runnable{
 		}
 		
 		lobby.playerLeft();
+		
+		terminateConnection();
 		
 	}
 	
@@ -103,6 +106,17 @@ public class ClientThread implements Runnable{
 	}
 	
 	private void waitForMatchData() {
+		
+	}
+	
+	private void terminateConnection() {
+		
+		try {
+			out.close();
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

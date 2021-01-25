@@ -10,9 +10,9 @@ import de.munchkin.frontend.Lobby;
 import de.munchkin.shared.LobbyUpdate;
 import de.munchkin.utilities.LobbyState;
 
-public class ServerController implements Runnable {
+public class ServerController implements Runnable, NetworkController {
 
-	private String ipAddress;
+	private String hostName, gender;
 	private int port;
 	private Lobby lobby;
 
@@ -20,19 +20,23 @@ public class ServerController implements Runnable {
 	private ArrayList<ClientThread> clients = new ArrayList<ClientThread>();
 	private Socket so;
 
-	public ServerController(String ipAddress, int port, Lobby lobby) {
+	public ServerController(String hostName, String gender, int port, Lobby lobby) {
 
-		this.ipAddress = ipAddress;
+		this.hostName = hostName;
+		this.gender = gender;
 		this.port = port;
 		this.lobby = lobby;
 		this.waitingOnGameStart = true;
-
+		
 	}
 
 	@Override
 	public void run() {
 
 //		clients.add(new ClientThread("127.0.0.1", port, null, lobby));
+		
+		lobby.addLobbyUpdate(hostName + " created the lobby!");
+		lobby.addLobbyUpdate(hostName + " joined the lobby as a " + gender);
 
 		try {
 
@@ -64,10 +68,6 @@ public class ServerController implements Runnable {
 
 	}
 
-	public String getIPAddress() {
-		return ipAddress;
-	}
-
 	public int getPort() {
 		return port;
 	}
@@ -75,6 +75,17 @@ public class ServerController implements Runnable {
 
 	public void start() {
 		waitingOnGameStart = false;
+	}
+
+	@Override
+	public void disconnect() {
+		try {
+			for(ClientThread client : clients) {
+				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, false, true));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

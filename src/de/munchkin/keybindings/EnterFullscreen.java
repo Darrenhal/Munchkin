@@ -22,7 +22,7 @@ public class EnterFullscreen extends AbstractAction{
 		
 		try {
 			frameType = frame.getClass();
-			c = frameType.getConstructor(Integer.class, Image.class);
+			c = frameType.getConstructor(Integer.class, Image.class, Boolean.class);
 		} catch (SecurityException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

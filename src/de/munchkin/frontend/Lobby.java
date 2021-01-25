@@ -6,7 +6,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.ArrayList;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,14 +28,18 @@ public class Lobby extends JFrame {
 	
 	private int playerCount = 1;
 	
+	private boolean isHost;
+	
 	private final JPanel contentPane = new JPanel(null);
 	private final JButton btnStartMatch = new JButton("Start Match");
 	private final JTextArea txtLobbyHistory = new JTextArea();
 	private final JLabel lblPlayerCount = new JLabel("" + playerCount);
 	private final JLabel lblPlayers = new JLabel("Players:");
 
-	public Lobby(Integer windowState, Image image) {
+	public Lobby(Integer windowState, Image image, Boolean isHost) {
 
+		this.isHost = isHost;
+		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Lobby");
 		setExtendedState(MAXIMIZED_BOTH);
@@ -68,7 +73,12 @@ public class Lobby extends JFrame {
 	private void loadComponents() {
 		
 		contentPane.add(txtLobbyHistory);
-		contentPane.add(btnStartMatch);
+		
+		if (isHost) {
+			contentPane.add(btnStartMatch);
+		}
+
+		
 		contentPane.add(lblPlayerCount);
 		contentPane.add(lblPlayers);
 		
@@ -82,7 +92,9 @@ public class Lobby extends JFrame {
 				contentPane.getHeight() - 120);
 		txtLobbyHistory.setEditable(false);
 
-		btnStartMatch.setBounds(20, getHeight() - 120, 150, 50);
+		if (isHost) {
+			btnStartMatch.setBounds(20, getHeight() - 120, 150, 50);
+		}
 		
 		lblPlayerCount.setBounds(100, 20, 50, 20);
 		
@@ -111,13 +123,26 @@ public class Lobby extends JFrame {
 			
 		});
 		
-		btnStartMatch.addActionListener(e -> {
+		if (isHost) {
+			btnStartMatch.addActionListener(e -> {
 
-			new GameScreen(0, getIconImage());
-			dispose();
+				new GameScreen(0, getIconImage());
+				dispose();
 
+			});
+		}
+
+		addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+				
+				
+			}
+			
 		});
-
+		
 	}
 
 	public void addLobbyUpdate(String update) {
@@ -143,7 +168,6 @@ public class Lobby extends JFrame {
 	}
 	
 	public String getLobbyHistory() {
-		System.out.println(txtLobbyHistory.getText());
 		return txtLobbyHistory.getText();
 	}
 	

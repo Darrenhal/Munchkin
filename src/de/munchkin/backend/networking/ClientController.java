@@ -9,13 +9,15 @@ import de.munchkin.frontend.Lobby;
 import de.munchkin.shared.LobbyUpdate;
 import de.munchkin.utilities.LobbyState;
 
-public class ClientController implements Runnable {
+public class ClientController implements Runnable, NetworkController {
 
 	private String ipAddress;
 	private int port;
 	private Lobby lobby;
 	private String playerName;
 	private String gender;
+	
+	private boolean connected;
 	
 	private Socket so;
 	private ObjectOutputStream out;
@@ -28,6 +30,7 @@ public class ClientController implements Runnable {
 		this.lobby = lobby;
 		this.playerName = playerName;
 		this.gender = gender;
+		this.connected = true;
 		
 	}
 	
@@ -47,6 +50,12 @@ public class ClientController implements Runnable {
 		communicatePlayerInfo();
 		
 		receiveLobbyState();
+		
+		while (connected) {
+			waitForInput();
+		}
+		
+		terminateConnection();
 		
 	}
 	
@@ -107,15 +116,36 @@ public class ClientController implements Runnable {
 	}
 	
 	private void waitForInput() {
+		LobbyUpdate update = null;
+		try {
+			update = (LobbyUpdate)in.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 		
-		
+		if (update.getDisconnecting()) {
+			connected = false;
+		}
 		
 	}
 	
+	@Override
 	public void disconnect() {
 		
 		try {
 			out.writeObject(new LobbyUpdate(playerName, gender, 0, null, false, true));
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void terminateConnection() {
+		
+		try {
+			out.close();
+			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -27,12 +27,25 @@ public class MatchCreation extends JFrame{
 	private Dimension screenDim = toolkit.getScreenSize();
 	private JPanel contentPane;
 	
+	
 	private JComboBox<Integer> comboBoxMinPlayers, comboBoxMaxPlayers;
 	private JComboBox<String> comboBoxGender;
-	private JButton btnCreateGame, btnGenerateNewPortNumber;
+	
+	private JButton btnCreateGame = new JButton("Create Game");
+	private JButton btnGenerateNewPortNumber = new JButton();
 	private final JButton btnBack = new JButton("Back");
-	private JTextField txtPlayerName, txtPort;
+	
+	private final JTextField txtPlayerName = new JTextField();
+	private final JTextField txtPort = new JTextField("" + generatePortNumber());
+	
 	private JCheckBox cbBaseGame, cbExpansion1; //add more expansion checkboxes in the future
+	
+	private JLabel lblPort = new JLabel("Port:");
+	private JLabel lblMinPlayers = new JLabel("Min. Players:");
+	private JLabel lblMaxPlayers = new JLabel("Max. Players:");
+	private JLabel lblPlayerName = new JLabel("Player Name:");
+	
+	
 	private Integer[] playerCount = {1, 2, 3, 4, 5, 6};
 	private String[] genders = {"male", "female"};
 	
@@ -83,35 +96,31 @@ public class MatchCreation extends JFrame{
 		cbExpansion1.setSelected(false);
 		cbExpansion1.setEnabled(true);
 		
-		btnCreateGame = new JButton("Create Game");
-		
-		txtPlayerName = new JTextField();
-		
-		txtPort = new JTextField();
-		
 		comboBoxGender = new JComboBox<String>(genders);
 		comboBoxGender.setSelectedIndex(0);
 		
-		JLabel lblPort = new JLabel("Port: ");
 		lblPort.setBounds(20, 240, 100, 20);
 		contentPane.add(lblPort);
 		
-		txtPort = new JTextField("" + generatePortNumber());
-		
-		btnGenerateNewPortNumber = new JButton();
+		contentPane.add(lblMinPlayers);
+		contentPane.add(comboBoxMinPlayers);
+		contentPane.add(lblMaxPlayers);
+		contentPane.add(comboBoxMaxPlayers);
+		contentPane.add(cbBaseGame);
+		contentPane.add(btnCreateGame);
+		contentPane.add(lblPlayerName);
+		contentPane.add(txtPlayerName);
 		
 	}
 	
 	void loadBounds() {
 		
-		JLabel lblMinPlayers = new JLabel("Min. Players:");
 		lblMinPlayers.setBounds(getWidth() - 300, 20, 100, 20);
 		contentPane.add(lblMinPlayers);
 		
 		comboBoxMinPlayers.setBounds(getWidth() - 200, 20, 175, 20);
 		contentPane.add(comboBoxMinPlayers);
 		
-		JLabel lblMaxPlayers = new JLabel("Max. Players:");
 		lblMaxPlayers.setBounds(getWidth() - 300, 60, 100, 20);
 		contentPane.add(lblMaxPlayers);
 		
@@ -127,7 +136,6 @@ public class MatchCreation extends JFrame{
 		btnCreateGame.setBounds(20, getHeight() - 100, 200, 40);
 		contentPane.add(btnCreateGame);
 		
-		JLabel lblPlayerName = new JLabel("Player Name:");
 		lblPlayerName.setBounds(20, 20, 80, 20);
 		contentPane.add(lblPlayerName);
 		
@@ -174,6 +182,8 @@ public class MatchCreation extends JFrame{
 			
 			String port = txtPort.getText();
 			
+			String gender = comboBoxGender.getSelectedItem().toString();
+			
 			int socketPort;
 			
 			if (port == null) {
@@ -190,8 +200,8 @@ public class MatchCreation extends JFrame{
 				JOptionPane.showMessageDialog(null, "Port out of bounds. Port must be a number between 1024 and 65535", "Port Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				
-				Lobby lobby = new Lobby(0, getIconImage());
-				new Thread(new ServerController("", new Integer(port), lobby)).start();
+				Lobby lobby = new Lobby(0, getIconImage(), true);
+				new Thread(new ServerController(playerName, gender, new Integer(port), lobby)).start();
 				dispose();
 			}
 			
