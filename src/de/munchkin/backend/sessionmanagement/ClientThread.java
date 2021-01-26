@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import de.munchkin.frontend.Lobby;
+import de.munchkin.frontend.model.LobbyModel;
 import de.munchkin.shared.LobbyUpdate;
 
 public class ClientThread implements Runnable{
@@ -13,19 +13,19 @@ public class ClientThread implements Runnable{
 	private String ipAddress;
 	private int port;
 	private Socket socket;
-	private Lobby lobby;
+	private LobbyModel model;
 	
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private boolean inLobby;
 	private boolean inMatch;
 
-	public ClientThread(String ipAddress, int port, Socket socket, Lobby lobby) {
+	public ClientThread(String ipAddress, int port, Socket socket, LobbyModel model) {
 
 		this.ipAddress = ipAddress;
 		this.port = port;
 		this.socket = socket;
-		this.lobby = lobby;
+		this.model = model;
 		this.inLobby = true;
 		this.inMatch = false;
 		
@@ -34,7 +34,7 @@ public class ClientThread implements Runnable{
 	@Override
 	public void run() {
 		
-		lobby.playerJoined();
+		model.playerJoined();
 		
 		establishStreams();
 		
@@ -46,7 +46,7 @@ public class ClientThread implements Runnable{
 			waitForMatchData();
 		}
 		
-		lobby.playerLeft();
+		model.playerLeft();
 		
 		terminateConnection();
 		
@@ -101,7 +101,7 @@ public class ClientThread implements Runnable{
 			lobbyUpdate = update.getPlayerName() + " joined the lobby as a " + update.getGender();
 		}
 		
-		lobby.addLobbyUpdate(lobbyUpdate);
+		model.addLobbyUpdate(lobbyUpdate);
 		
 	}
 	
@@ -114,6 +114,7 @@ public class ClientThread implements Runnable{
 		try {
 			out.close();
 			in.close();
+			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -1,4 +1,4 @@
-package de.munchkin.frontend;
+package de.munchkin.frontend.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,7 +23,7 @@ public class GameScreen extends JFrame{
 	private final JPanel contentPane = new JPanel(null);;
 	private final JButton btn = new JButton("Button");
 	
-	public GameScreen(Integer windowState, Image image) {
+	public GameScreen(Integer windowState, Image image, Boolean isHost) {
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Munchkin");
@@ -42,7 +42,7 @@ public class GameScreen extends JFrame{
 		contentPane.setLayout(null);
 		setLayout(null);
 		contentPane.getInputMap(KeyBindings.AFC).put(KeyStroke.getKeyStroke("F11"), "game_fullscreen");
-		contentPane.getActionMap().put("game_fullscreen", new EnterFullscreen(this));
+		contentPane.getActionMap().put("game_fullscreen", new EnterFullscreen(this, isHost, null, null));
 		contentPane.setBackground(new Color(253, 205, 136));
 		setContentPane(contentPane);
 		
