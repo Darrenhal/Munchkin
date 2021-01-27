@@ -118,7 +118,7 @@ public class MatchJoin extends JFrame{
 			String playerName = txtPlayerName.getText();
 			String gender = comboBoxGender.getSelectedItem().toString();
 			
-			LobbyModel model = new LobbyModel(1, "");
+			LobbyModel model = new LobbyModel(1, "", 0, 0);
 			ClientController controller = new ClientController(ipAddress, new Integer(port), model, playerName, gender);
 			new Lobby(0, getIconImage(), false, model, controller);
 			new Thread(controller).start();

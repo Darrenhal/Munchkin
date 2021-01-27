@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import de.munchkin.frontend.model.GameScreenModel;
 import de.munchkin.frontend.model.LobbyModel;
+import de.munchkin.frontend.view.GameScreen;
 import de.munchkin.shared.LobbyUpdate;
 import de.munchkin.utilities.LobbyState;
 
@@ -123,7 +125,6 @@ public class ClientController implements Runnable, NetworkController {
 		
 		if (update.getDisconnecting()) {
 			connected = false;
-			
 			try {
 				in.close();
 				out.close();
@@ -132,6 +133,10 @@ public class ClientController implements Runnable, NetworkController {
 				e.printStackTrace();
 			}
 			
+		} else if (update.getStartMatch()) {
+			new GameScreenModel();
+			new GameScreen(0, model.getIconImage(), false);
+			model.startMatch();
 		} else {
 			model.setPlayerCount(update.getPlayerCount());
 			model.setLobbyHistory(update.getLobbyHistoryUpdate());

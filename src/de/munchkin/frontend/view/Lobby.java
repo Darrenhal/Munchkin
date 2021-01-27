@@ -17,6 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
 import de.munchkin.backend.networking.NetworkController;
+import de.munchkin.backend.networking.ServerController;
 import de.munchkin.frontend.model.LobbyModel;
 import de.munchkin.keybindings.EnterFullscreen;
 import de.munchkin.keybindings.KeyBindings;
@@ -29,21 +30,20 @@ public class Lobby extends JFrame {
 	private final Dimension screenDim = toolkit.getScreenSize();
 	
 	private boolean isHost;
-	private LobbyModel model;
 	private NetworkController controller;
 	
 	private final JPanel contentPane = new JPanel(null);
 	private final JButton btnStartMatch = new JButton("Start Match");
 	private final JTextArea txtLobbyHistory = new JTextArea();
-	private final JLabel lblPlayerCount = new JLabel("" + 1);;
+	private final JLabel lblPlayerCount = new JLabel("" + 1);
 	private final JLabel lblPlayers = new JLabel("Players:");
 
 	public Lobby(Integer windowState, Image image, Boolean isHost, LobbyModel model, NetworkController controller) {
 		
 		this.isHost = isHost;
-		this.model = model;
 		this.controller = controller;
 		model.updateReferencedUI(this);
+		model.checkPlayerCount();
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Lobby");
@@ -84,9 +84,6 @@ public class Lobby extends JFrame {
 		
 		if (isHost) {
 			contentPane.add(btnStartMatch);
-			if (model.getPlayerCount() < 6) {
-				
-			}
 		}
 
 		
@@ -138,6 +135,7 @@ public class Lobby extends JFrame {
 			btnStartMatch.addActionListener(e -> {
 
 				new GameScreen(0, getIconImage(), isHost);
+				((ServerController)controller).start();
 				dispose();
 
 			});
@@ -158,13 +156,21 @@ public class Lobby extends JFrame {
 
 	public void addLobbyUpdate(String update) {
 
-		txtLobbyHistory.setText(update);;
+		txtLobbyHistory.setText(update);
 
 	}
 
 	public void updatePlayerCount(int playerCount) {
 		lblPlayerCount.setText("" + playerCount);
 		repaint();
+	}
+	
+	public void enableGameStart(boolean isValid) {
+		if (isValid) {
+			btnStartMatch.setEnabled(true);
+		} else {
+			btnStartMatch.setEnabled(false);
+		}
 	}
 	
 }

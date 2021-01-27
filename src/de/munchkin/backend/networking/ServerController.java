@@ -27,15 +27,15 @@ public class ServerController implements Runnable, NetworkController {
 		this.port = port;
 		this.model = model;
 		this.waitingOnGameStart = true;
-		
+
 	}
 
 	@Override
 	public void run() {
 
 //		clients.add(new ClientThread("127.0.0.1", port, null, lobby));
-		
-		model.addLobbyUpdate(hostName + " created the lobby!");
+
+		model.addLobbyUpdate(hostName + " created the lobby on port " + port + "!");
 		model.addLobbyUpdate(hostName + " joined the lobby as a " + gender);
 
 		try {
@@ -47,19 +47,20 @@ public class ServerController implements Runnable, NetworkController {
 				ClientThread client = new ClientThread(so.getInetAddress().getHostAddress(), so.getPort(), so, model);
 				clients.add(client);
 				new Thread(client).start();
-				
+
 				Thread.sleep(100);
-				
+
 				client.getOutputStream().writeObject(new LobbyState(model.getPlayerCount(), model.getLobbyHistory()));
-				
+
 				Thread.sleep(100);
-				
-				for(ClientThread c : clients) {
-					c.getOutputStream().writeObject(new LobbyUpdate(null, null, model.getPlayerCount(), model.getLobbyHistory(), false, false));
+
+				for (ClientThread c : clients) {
+					c.getOutputStream().writeObject(
+							new LobbyUpdate(null, null, model.getPlayerCount(), model.getLobbyHistory(), false, false));
 				}
-				
+
 			}
-			
+
 			ss.close();
 
 		} catch (IOException | InterruptedException e) {
@@ -72,15 +73,21 @@ public class ServerController implements Runnable, NetworkController {
 		return port;
 	}
 
-
 	public void start() {
 		waitingOnGameStart = false;
+		try {
+			for (ClientThread client : clients) {
+				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, true, false));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void disconnect() {
 		try {
-			for(ClientThread client : clients) {
+			for (ClientThread client : clients) {
 				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, false, true));
 			}
 			terminateConnection();
@@ -90,9 +97,9 @@ public class ServerController implements Runnable, NetworkController {
 	}
 
 	private void terminateConnection() {
-		
+
 		try {
-			for(ClientThread client : clients) {
+			for (ClientThread client : clients) {
 				client.getOutputStream().close();
 				client.getInputStream().close();
 				client.getSocket().close();
@@ -100,7 +107,7 @@ public class ServerController implements Runnable, NetworkController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 }

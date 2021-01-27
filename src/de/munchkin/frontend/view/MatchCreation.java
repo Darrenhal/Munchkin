@@ -201,7 +201,7 @@ public class MatchCreation extends JFrame{
 				JOptionPane.showMessageDialog(null, "Port out of bounds. Port must be a number between 1024 and 65535", "Port Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				
-				LobbyModel model = new LobbyModel(1, "");
+				LobbyModel model = new LobbyModel(1, "", minPlayers, maxPlayers);
 				ServerController controller = new ServerController(playerName, gender, new Integer(port), model);
 				new Lobby(0, getIconImage(), true, model, controller);
 				new Thread(controller).start();
