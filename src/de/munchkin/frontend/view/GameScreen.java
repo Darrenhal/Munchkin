@@ -20,8 +20,7 @@ public class GameScreen extends JFrame{
 	private Toolkit toolkit = Toolkit.getDefaultToolkit();
 	private Dimension screenDim = toolkit.getScreenSize();
 	
-	private final JPanel contentPane = new JPanel(null);;
-	private final JButton btn = new JButton("Button");
+	private final JPanel contentPane = new JPanel(null);
 	
 	public GameScreen(Integer windowState, Image image, Boolean isHost) {
 
@@ -56,9 +55,6 @@ public class GameScreen extends JFrame{
 	private void loadBounds() {
 		
 		contentPane.setSize(getSize());
-		
-		btn.setBounds(40, 40, 100, 20);
-		contentPane.add(btn);
 		
 	}
 	
