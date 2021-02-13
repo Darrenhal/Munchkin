@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import de.munchkin.backend.sessionmanagement.ClientThread;
-import de.munchkin.frontend.Lobby;
+import de.munchkin.frontend.view.Lobby;
 import de.munchkin.shared.LobbyUpdate;
 import de.munchkin.utilities.LobbyState;
 
