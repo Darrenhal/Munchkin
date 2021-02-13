@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import de.munchkin.backend.sessionmanagement.ClientThread;
-import de.munchkin.frontend.view.Lobby;
+import de.munchkin.frontend.model.LobbyModel;
 import de.munchkin.shared.LobbyUpdate;
 import de.munchkin.utilities.LobbyState;
 
@@ -14,29 +14,29 @@ public class ServerController implements Runnable, NetworkController {
 
 	private String hostName, gender;
 	private int port;
-	private Lobby lobby;
+	private LobbyModel model;
 
 	private boolean waitingOnGameStart;
 	private ArrayList<ClientThread> clients = new ArrayList<ClientThread>();
 	private Socket so;
 
-	public ServerController(String hostName, String gender, int port, Lobby lobby) {
+	public ServerController(String hostName, String gender, int port, LobbyModel model) {
 
 		this.hostName = hostName;
 		this.gender = gender;
 		this.port = port;
-		this.lobby = lobby;
+		this.model = model;
 		this.waitingOnGameStart = true;
-		
+
 	}
 
 	@Override
 	public void run() {
 
 //		clients.add(new ClientThread("127.0.0.1", port, null, lobby));
-		
-		lobby.addLobbyUpdate(hostName + " created the lobby!");
-		lobby.addLobbyUpdate(hostName + " joined the lobby as a " + gender);
+
+		model.addLobbyUpdate(hostName + " created the lobby on port " + port + "!");
+		model.addLobbyUpdate(hostName + " joined the lobby as a " + gender);
 
 		try {
 
@@ -44,22 +44,23 @@ public class ServerController implements Runnable, NetworkController {
 
 			while (waitingOnGameStart) {
 				so = ss.accept();
-				ClientThread client = new ClientThread(so.getInetAddress().getHostAddress(), so.getPort(), so, lobby);
+				ClientThread client = new ClientThread(so.getInetAddress().getHostAddress(), so.getPort(), so, model);
 				clients.add(client);
 				new Thread(client).start();
-				
+
 				Thread.sleep(100);
-				
-				client.getOutputStream().writeObject(new LobbyState(lobby.getPlayerCount(), lobby.getLobbyHistory()));
-				
+
+				client.getOutputStream().writeObject(new LobbyState(model.getPlayerCount(), model.getLobbyHistory()));
+
 				Thread.sleep(100);
-				
-				for(ClientThread c : clients) {
-					c.getOutputStream().writeObject(new LobbyUpdate(null, null, lobby.getPlayerCount(), lobby.getLobbyHistory(), false, false));
+
+				for (ClientThread c : clients) {
+					c.getOutputStream().writeObject(
+							new LobbyUpdate(null, null, model.getPlayerCount(), model.getLobbyHistory(), false, false));
 				}
-				
+
 			}
-			
+
 			ss.close();
 
 		} catch (IOException | InterruptedException e) {
@@ -72,20 +73,41 @@ public class ServerController implements Runnable, NetworkController {
 		return port;
 	}
 
-
 	public void start() {
 		waitingOnGameStart = false;
+		try {
+			for (ClientThread client : clients) {
+				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, true, false));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void disconnect() {
 		try {
-			for(ClientThread client : clients) {
+			for (ClientThread client : clients) {
 				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, false, true));
+			}
+			terminateConnection();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void terminateConnection() {
+
+		try {
+			for (ClientThread client : clients) {
+				client.getOutputStream().close();
+				client.getInputStream().close();
+				client.getSocket().close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 }

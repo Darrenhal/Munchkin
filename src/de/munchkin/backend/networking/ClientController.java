@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import de.munchkin.frontend.view.Lobby;
+import de.munchkin.frontend.model.GameScreenModel;
+import de.munchkin.frontend.model.LobbyModel;
+import de.munchkin.frontend.view.GameScreen;
 import de.munchkin.shared.LobbyUpdate;
 import de.munchkin.utilities.LobbyState;
 
@@ -13,7 +15,7 @@ public class ClientController implements Runnable, NetworkController {
 
 	private String ipAddress;
 	private int port;
-	private Lobby lobby;
+	private LobbyModel model;
 	private String playerName;
 	private String gender;
 	
@@ -23,11 +25,11 @@ public class ClientController implements Runnable, NetworkController {
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	
-	public ClientController(String ipAddress, int port, Lobby lobby, String playerName, String gender) {
+	public ClientController(String ipAddress, int port, LobbyModel model, String playerName, String gender) {
 		
 		this.ipAddress = ipAddress;
 		this.port = port;
-		this.lobby = lobby;
+		this.model = model;
 		this.playerName = playerName;
 		this.gender = gender;
 		this.connected = true;
@@ -54,8 +56,6 @@ public class ClientController implements Runnable, NetworkController {
 		while (connected) {
 			waitForInput();
 		}
-		
-		terminateConnection();
 		
 	}
 	
@@ -110,8 +110,8 @@ public class ClientController implements Runnable, NetworkController {
 			e.printStackTrace();
 		}
 		
-		lobby.addLobbyUpdate(state.getLobbyHistory());
-		lobby.setPlayerCount(state.getPlayerCount());
+		model.addLobbyUpdate(state.getLobbyHistory());
+		model.setPlayerCount(state.getPlayerCount());
 		
 	}
 	
@@ -125,6 +125,21 @@ public class ClientController implements Runnable, NetworkController {
 		
 		if (update.getDisconnecting()) {
 			connected = false;
+			try {
+				in.close();
+				out.close();
+				so.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		} else if (update.getStartMatch()) {
+			new GameScreenModel();
+			new GameScreen(0, model.getIconImage(), false);
+			model.startMatch();
+		} else {
+			model.setPlayerCount(update.getPlayerCount());
+			model.setLobbyHistory(update.getLobbyHistoryUpdate());
 		}
 		
 	}
@@ -134,10 +149,13 @@ public class ClientController implements Runnable, NetworkController {
 		
 		try {
 			out.writeObject(new LobbyUpdate(playerName, gender, 0, null, false, true));
-			out.flush();
+			connected = false;
+			terminateConnection();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		
 		
 	}
 	
@@ -146,6 +164,7 @@ public class ClientController implements Runnable, NetworkController {
 		try {
 			out.close();
 			in.close();
+			so.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

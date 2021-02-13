@@ -16,6 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
+import de.munchkin.backend.networking.NetworkController;
+import de.munchkin.backend.networking.ServerController;
+import de.munchkin.frontend.model.LobbyModel;
 import de.munchkin.keybindings.EnterFullscreen;
 import de.munchkin.keybindings.KeyBindings;
 
@@ -26,19 +29,21 @@ public class Lobby extends JFrame {
 	private final Toolkit toolkit = Toolkit.getDefaultToolkit();
 	private final Dimension screenDim = toolkit.getScreenSize();
 	
-	private int playerCount = 1;
-	
 	private boolean isHost;
+	private NetworkController controller;
 	
 	private final JPanel contentPane = new JPanel(null);
 	private final JButton btnStartMatch = new JButton("Start Match");
 	private final JTextArea txtLobbyHistory = new JTextArea();
-	private final JLabel lblPlayerCount = new JLabel("" + playerCount);
+	private final JLabel lblPlayerCount = new JLabel("" + 1);
 	private final JLabel lblPlayers = new JLabel("Players:");
 
-	public Lobby(Integer windowState, Image image, Boolean isHost) {
-
+	public Lobby(Integer windowState, Image image, Boolean isHost, LobbyModel model, NetworkController controller) {
+		
 		this.isHost = isHost;
+		this.controller = controller;
+		model.updateReferencedUI(this);
+		model.checkPlayerCount();
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Lobby");
@@ -58,7 +63,7 @@ public class Lobby extends JFrame {
 		contentPane.setLayout(null);
 		setLayout(null);
 		contentPane.getInputMap(KeyBindings.AFC).put(KeyStroke.getKeyStroke("F11"), "lobby_fullscreen");
-		contentPane.getActionMap().put("lobby_fullscreen", new EnterFullscreen(this));
+		contentPane.getActionMap().put("lobby_fullscreen", new EnterFullscreen(this, this.isHost, model, controller));
 		contentPane.setBackground(new Color(253, 205, 136));
 		setContentPane(contentPane);
 
@@ -66,6 +71,9 @@ public class Lobby extends JFrame {
 		loadBounds();
 		addActionListeners();
 
+		lblPlayerCount.setText("" + model.getPlayerCount());
+		txtLobbyHistory.setText(model.getLobbyHistory());
+		
 		setVisible(true);
 
 	}
@@ -126,7 +134,8 @@ public class Lobby extends JFrame {
 		if (isHost) {
 			btnStartMatch.addActionListener(e -> {
 
-				new GameScreen(0, getIconImage());
+				new GameScreen(0, getIconImage(), isHost);
+				((ServerController)controller).start();
 				dispose();
 
 			});
@@ -137,7 +146,7 @@ public class Lobby extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
-				
+				controller.disconnect();
 				
 			}
 			
@@ -147,33 +156,21 @@ public class Lobby extends JFrame {
 
 	public void addLobbyUpdate(String update) {
 
-		txtLobbyHistory.append(update + "\n");
+		txtLobbyHistory.setText(update);
 
 	}
 
-	public void playerJoined() {
-		playerCount++;
+	public void updatePlayerCount(int playerCount) {
 		lblPlayerCount.setText("" + playerCount);
 		repaint();
 	}
 	
-	public void playerLeft() {
-		playerCount--;
-		lblPlayerCount.setText("" + playerCount);
-		repaint();
-	}
-	
-	public int getPlayerCount() {
-		return playerCount;
-	}
-	
-	public String getLobbyHistory() {
-		return txtLobbyHistory.getText();
-	}
-	
-	public void setPlayerCount(int playerCount) {
-		this.playerCount = playerCount;
-		lblPlayerCount.setText("" + playerCount);
+	public void enableGameStart(boolean isValid) {
+		if (isValid) {
+			btnStartMatch.setEnabled(true);
+		} else {
+			btnStartMatch.setEnabled(false);
+		}
 	}
 	
 }

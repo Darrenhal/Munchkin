@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import de.munchkin.backend.networking.ServerController;
+import de.munchkin.frontend.model.LobbyModel;
 
 public class MatchCreation extends JFrame{
 	
@@ -200,8 +201,10 @@ public class MatchCreation extends JFrame{
 				JOptionPane.showMessageDialog(null, "Port out of bounds. Port must be a number between 1024 and 65535", "Port Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				
-				Lobby lobby = new Lobby(0, getIconImage(), true);
-				new Thread(new ServerController(playerName, gender, new Integer(port), lobby)).start();
+				LobbyModel model = new LobbyModel(1, "", minPlayers, maxPlayers);
+				ServerController controller = new ServerController(playerName, gender, new Integer(port), model);
+				new Lobby(0, getIconImage(), true, model, controller);
+				new Thread(controller).start();
 				dispose();
 			}
 			

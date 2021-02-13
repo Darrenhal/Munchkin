@@ -20,10 +20,9 @@ public class GameScreen extends JFrame{
 	private Toolkit toolkit = Toolkit.getDefaultToolkit();
 	private Dimension screenDim = toolkit.getScreenSize();
 	
-	private final JPanel contentPane = new JPanel(null);;
-	private final JButton btn = new JButton("Button");
+	private final JPanel contentPane = new JPanel(null);
 	
-	public GameScreen(Integer windowState, Image image) {
+	public GameScreen(Integer windowState, Image image, Boolean isHost) {
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Munchkin");
@@ -42,7 +41,7 @@ public class GameScreen extends JFrame{
 		contentPane.setLayout(null);
 		setLayout(null);
 		contentPane.getInputMap(KeyBindings.AFC).put(KeyStroke.getKeyStroke("F11"), "game_fullscreen");
-		contentPane.getActionMap().put("game_fullscreen", new EnterFullscreen(this));
+		contentPane.getActionMap().put("game_fullscreen", new EnterFullscreen(this, isHost, null, null));
 		contentPane.setBackground(new Color(253, 205, 136));
 		setContentPane(contentPane);
 		
@@ -56,9 +55,6 @@ public class GameScreen extends JFrame{
 	private void loadBounds() {
 		
 		contentPane.setSize(getSize());
-		
-		btn.setBounds(40, 40, 100, 20);
-		contentPane.add(btn);
 		
 	}
 	
