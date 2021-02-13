@@ -29,6 +29,8 @@ public class SessionManager implements Runnable{
 	
 	
 	
+	
+	
 	public void endTurn() {
 		int activePlayerIndex = clients.indexOf(this.activePlayer);
 		
