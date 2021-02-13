@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import de.munchkin.frontend.Lobby;
 import de.munchkin.shared.LobbyUpdate;
+import de.munchkin.shared.MatchData;
 
 public class ClientThread implements Runnable{
 
@@ -106,6 +107,14 @@ public class ClientThread implements Runnable{
 	}
 	
 	private void waitForMatchData() {
+		
+		MatchData data = null;
+		
+		try {
+			data = (MatchData) in.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

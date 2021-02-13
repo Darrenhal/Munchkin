@@ -7,6 +7,7 @@ public class SessionManager implements Runnable{
 	
 	private ArrayList<ClientThread> clients;
 	private ClientThread activePlayer;
+	private boolean running;
 	
 	public SessionManager(ArrayList<ClientThread> clients) {
 		
@@ -18,7 +19,15 @@ public class SessionManager implements Runnable{
 	@Override
 	public void run() {
 		
+		running = true;
+		
+		while (running) {
+			
+		}
+		
 	}
+	
+	
 	
 	public void endTurn() {
 		int activePlayerIndex = clients.indexOf(this.activePlayer);
