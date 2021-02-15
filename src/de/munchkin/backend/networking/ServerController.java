@@ -56,7 +56,7 @@ public class ServerController implements Runnable, NetworkController {
 
 				for (ClientThread c : clients) {
 					c.getOutputStream().writeObject(
-							new LobbyUpdate(null, null, model.getPlayerCount(), model.getLobbyHistory(), false, false));
+							new LobbyUpdate(null, null, model.getPlayerCount(), model.getLobbyHistory(), false, false, null));
 				}
 
 			}
@@ -77,7 +77,7 @@ public class ServerController implements Runnable, NetworkController {
 		waitingOnGameStart = false;
 		try {
 			for (ClientThread client : clients) {
-				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, true, false));
+				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, true, false, null));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -88,7 +88,7 @@ public class ServerController implements Runnable, NetworkController {
 	public void disconnect() {
 		try {
 			for (ClientThread client : clients) {
-				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, false, true));
+				client.getOutputStream().writeObject(new LobbyUpdate(null, null, 0, null, false, true, null));
 			}
 			terminateConnection();
 		} catch (IOException e) {
@@ -110,4 +110,16 @@ public class ServerController implements Runnable, NetworkController {
 
 	}
 
+	public void sendUpdate(Object update) {
+		
+		try {
+			for (ClientThread client : clients) {
+				client.getOutputStream().writeObject(update);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 }

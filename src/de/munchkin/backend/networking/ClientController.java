@@ -93,7 +93,7 @@ public class ClientController implements Runnable, NetworkController {
 	private void communicatePlayerInfo() {
 		
 		try {
-			out.writeObject(new LobbyUpdate(playerName, gender, 0, null, false, false));
+			out.writeObject(new LobbyUpdate(playerName, gender, 0, null, false, false, null));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -134,8 +134,8 @@ public class ClientController implements Runnable, NetworkController {
 			}
 			
 		} else if (update.getStartMatch()) {
-			new GameScreenModel();
-			new GameScreen(0, model.getIconImage(), false);
+			GameScreenModel  gsModel = new GameScreenModel();
+			new GameScreen(0, model.getIconImage(), gsModel, false);
 			model.startMatch();
 		} else {
 			model.setPlayerCount(update.getPlayerCount());
@@ -148,7 +148,7 @@ public class ClientController implements Runnable, NetworkController {
 	public void disconnect() {
 		
 		try {
-			out.writeObject(new LobbyUpdate(playerName, gender, 0, null, false, true));
+			out.writeObject(new LobbyUpdate(playerName, gender, 0, null, false, true, null));
 			connected = false;
 			terminateConnection();
 		} catch (IOException e) {

@@ -2,6 +2,8 @@ package de.munchkin.shared;
 
 import java.io.Serializable;
 
+import javafx.util.Pair;
+
 public class LobbyUpdate implements Serializable{
 	
 	private static final long serialVersionUID = 4006602632781476202L;
@@ -12,8 +14,9 @@ public class LobbyUpdate implements Serializable{
 	private String playerName;
 	private String gender;
 	private boolean disconnecting;
+	private Pair<Pair<Integer, Boolean>, String> expansionPack;
 	
-	public LobbyUpdate(String playerName, String gender, int playerCount, String lobbyHistoryUpdate, boolean startMatch, boolean disconnecting) {
+	public LobbyUpdate(String playerName, String gender, int playerCount, String lobbyHistoryUpdate, boolean startMatch, boolean disconnecting, Pair<Pair<Integer, Boolean>, String> expansionPacks) {
 		
 		this.playerName = playerName;
 		this.gender = gender;
@@ -21,6 +24,7 @@ public class LobbyUpdate implements Serializable{
 		this.lobbyHistoryUpdate = lobbyHistoryUpdate;
 		this.startMatch = startMatch;
 		this.disconnecting = disconnecting;
+		this.expansionPack = expansionPacks;
 		
 	}
 	
@@ -46,6 +50,10 @@ public class LobbyUpdate implements Serializable{
 	
 	public boolean getDisconnecting() {
 		return disconnecting;
+	}
+	
+	public Pair<Pair<Integer, Boolean>, String> getExpansionPackUpdate() {
+		return expansionPack;
 	}
 	
 }

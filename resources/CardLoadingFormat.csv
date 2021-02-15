@@ -1,3 +1,4 @@
+packID;
 StackType{Treasure,Door,(Dungeon)};
 CardType{Monster,Race,Class,Equippable,Curse,Intervention,Amplifier,(Horse)};
 Level;

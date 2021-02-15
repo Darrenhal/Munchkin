@@ -5,11 +5,11 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import de.munchkin.frontend.model.GameScreenModel;
 import de.munchkin.keybindings.EnterFullscreen;
 import de.munchkin.keybindings.KeyBindings;
 
@@ -22,7 +22,7 @@ public class GameScreen extends JFrame{
 	
 	private final JPanel contentPane = new JPanel(null);
 	
-	public GameScreen(Integer windowState, Image image, Boolean isHost) {
+	public GameScreen(Integer windowState, Image image, GameScreenModel model, Boolean isHost) {
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Munchkin");

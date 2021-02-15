@@ -7,10 +7,12 @@ public class Item implements IGameCard {
 	private String description;
 	private int bonus;
 	private Slot slot;
+	private int packID;
 	
-	public Item(Slot slot) {
+	public Item(Slot slot, int packID) {
 		
 		this.slot = slot;
+		this.packID = packID;
 		
 	}
 
@@ -22,7 +24,12 @@ public class Item implements IGameCard {
 		return value;
 	}
 	
-	public String getItemName() {
+	@Override
+	public int getPackID() {
+		return packID;
+	}
+	
+	public String getName() {
 		return itemName;
 	}
 	

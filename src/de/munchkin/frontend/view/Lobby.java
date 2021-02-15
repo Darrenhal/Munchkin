@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,9 +19,12 @@ import javax.swing.KeyStroke;
 
 import de.munchkin.backend.networking.NetworkController;
 import de.munchkin.backend.networking.ServerController;
+import de.munchkin.frontend.model.GameScreenModel;
 import de.munchkin.frontend.model.LobbyModel;
 import de.munchkin.keybindings.EnterFullscreen;
 import de.munchkin.keybindings.KeyBindings;
+import de.munchkin.shared.LobbyUpdate;
+import javafx.util.Pair;
 
 public class Lobby extends JFrame {
 
@@ -37,6 +41,7 @@ public class Lobby extends JFrame {
 	private final JTextArea txtLobbyHistory = new JTextArea();
 	private final JLabel lblPlayerCount = new JLabel("" + 1);
 	private final JLabel lblPlayers = new JLabel("Players:");
+	private JCheckBox cbBaseGame, cbExpansion1; //add more expansion checkboxes in the future
 
 	public Lobby(Integer windowState, Image image, Boolean isHost, LobbyModel model, NetworkController controller) {
 		
@@ -80,13 +85,27 @@ public class Lobby extends JFrame {
 
 	private void loadComponents() {
 		
+		txtLobbyHistory.setLineWrap(true);
+		txtLobbyHistory.setWrapStyleWord(true);
 		contentPane.add(txtLobbyHistory);
+		
+		cbBaseGame = new JCheckBox("Base Game");
+		cbBaseGame.setSelected(true);
+		contentPane.add(cbBaseGame);
+		
+		cbExpansion1 = new JCheckBox("Expansion 1");
+		cbExpansion1.setSelected(false);
+		contentPane.add(cbExpansion1);
 		
 		if (isHost) {
 			contentPane.add(btnStartMatch);
+			cbBaseGame.setEnabled(false);
+			cbExpansion1.setEnabled(true);
+		} else {
+			cbBaseGame.setEnabled(false);
+			cbExpansion1.setEnabled(false);
 		}
 
-		
 		contentPane.add(lblPlayerCount);
 		contentPane.add(lblPlayers);
 		
@@ -100,6 +119,10 @@ public class Lobby extends JFrame {
 				contentPane.getHeight() - 120);
 		txtLobbyHistory.setEditable(false);
 
+		cbBaseGame.setBounds(txtLobbyHistory.getBounds().x - 200, txtLobbyHistory.getBounds().y, 175, 20);
+		
+		cbExpansion1.setBounds(txtLobbyHistory.getBounds().x - 200, txtLobbyHistory.getBounds().y + 20, 175, 20);
+		
 		if (isHost) {
 			btnStartMatch.setBounds(20, getHeight() - 120, 150, 50);
 		}
@@ -110,7 +133,7 @@ public class Lobby extends JFrame {
 	}
 
 	private void addActionListeners() {
-
+		
 		addComponentListener(new ComponentAdapter() {
 			
 			@Override
@@ -133,11 +156,29 @@ public class Lobby extends JFrame {
 		
 		if (isHost) {
 			btnStartMatch.addActionListener(e -> {
-
-				new GameScreen(0, getIconImage(), isHost);
+				
+				GameScreenModel model = new GameScreenModel();
+				new GameScreen(0, getIconImage(), model, isHost);
 				((ServerController)controller).start();
 				dispose();
 
+			});
+			
+			cbExpansion1.addActionListener(e -> {
+				
+				Pair<Pair<Integer, Boolean>, String> expansionPack;
+				
+				
+				if (cbExpansion1.isSelected()) {
+					Pair<Integer, Boolean> packID = new Pair<Integer, Boolean>(1, true);
+					expansionPack = new Pair<Pair<Integer, Boolean>, String>(packID, "Expansion 1");
+				} else {
+					Pair<Integer, Boolean> packID = new Pair<Integer, Boolean>(1, false);
+					expansionPack = new Pair<Pair<Integer, Boolean>, String>(packID, "Expansion 1");
+				}
+				
+				((ServerController)controller).sendUpdate(new LobbyUpdate(null, null, -1, null, false, false, expansionPack));
+				
 			});
 		}
 
